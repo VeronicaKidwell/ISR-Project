@@ -1,4 +1,4 @@
-
+//HAS NOT BEEN TESTED. UPLOAD AND TEST. NEED TO ADD 4 MORE SENSORS BEFORE BEING TESTED.
 
 // loop counter for debug monitor
 int loopCnt;
@@ -7,7 +7,15 @@ int loopCnt;
 int ServoPin = 11;
 //
 // -- force resistor on pin 0
-int fsrAnalogPin = 0;
+int fsrAnalogPin0 = 0;
+int fsrAnalogPin1 = 1;
+int fsrAnalogPin2 = 2;
+int fsrAnalogPin3 = 3;
+int fsrAnalogPin4 = 4; 
+//
+// sum value to be used for the avergae
+int sum = 0;
+int snsrNumber = 0;
 //
 // -- servo min and max values
 int forceMin = 0;
@@ -43,12 +51,37 @@ void loop() {
   // -- begin a pass through the loop
   // Serial.print(", loop:" + String( loopCnt ));
   //
-  // -- read in analog value from force resister and output do monitor
-  int forceInput = analogRead(fsrAnalogPin);
-  Serial.print(forceInput);
+  // -- read in analog value from force resisters
+  int forceInput0 = analogRead(fsrAnalogPin0);
+  int forceInput1 = analogRead(fsrAnalogPin1);
+  int forceInput2 = analogRead(fsrAnalogPin2);
+  int forceInput3 = analogRead(fsrAnalogPin3);
+  int forceInput4 = analogRead(fsrAnalogPin4);
+  //
+  //
+  // Averaging out the input while ignoring values under 50
+  if(forceInput0 > 50)
+    sum += forceInput0;
+    snsrNumber++;
+  if(forceInput1 > 50)
+    sum += forceInput1;
+    snsrNumber++;
+  if(forceInput2 > 50)
+    sum += forceInput2;
+    snsrNumber++;
+  if(forceInput3 > 50)
+    sum += forceInput3;
+    snsrNumber++;
+  if(forceInput4 > 50)
+    sum += forceInput4;
+    snsrNumber++;
+  int averageForce = sum/snsrNumber;
+  //
+  // Printing out the averaged value
+  Serial.print(averageForce);
   //
   // -- noise filter
-  filteredInput = ((filteredInput * filterWeight) + forceInput)/(filterWeight+1);
+  filteredInput = ((filteredInput * filterWeight) + averageForce)/(filterWeight+1);
   Serial.print(",");
   Serial.print(filteredInput);
   //
